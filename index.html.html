@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vivek Financial</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Cambria,Georgia,'Times New Roman',serif;background:#f5f0e8;color:#2a1f0f;font-size:15px;line-height:1.5;}
+input,select,button{font-family:Cambria,Georgia,serif;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#c8b99a;border-radius:4px;}
+
+#hdr{background:#ece5d4;border-bottom:2px solid #c8b99a;padding:14px 28px 10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+#hdr h1{font-size:1.4rem;font-weight:700;color:#2a1f0f;}
+#hdr .sub{font-size:.75rem;color:#7a6040;font-style:italic;margin-bottom:8px;}
+.tabs{display:flex;gap:6px;}
+.tab{padding:5px 16px;border-radius:20px;border:1.5px solid #c8b99a;background:transparent;color:#7a6040;font-size:.8rem;cursor:pointer;transition:all .15s;}
+.tab:hover{background:#ddd5be;}
+.tab.on{background:#5a3e1e;color:#f5f0e8;border-color:#5a3e1e;font-weight:700;}
+
+#main{max-width:100%;margin:0;padding:20px 28px 80px;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.stat{background:#ece5d4;border:1.5px solid #c8b99a;border-radius:8px;padding:10px 8px;text-align:center;}
+.stat-n{font-size:1.8rem;font-weight:700;}
+.stat-l{font-size:.68rem;color:#7a6040;text-transform:uppercase;letter-spacing:.05em;}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.toolbar input,.toolbar select{padding:7px 11px;border:1.5px solid #c8b99a;border-radius:6px;background:#faf7f0;font-size:.82rem;color:#2a1f0f;outline:none;}
+.toolbar input{flex:1;min-width:140px;}
+.toolbar input:focus,.toolbar select:focus{border-color:#7a6040;}
+.btn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:.82rem;font-weight:600;transition:all .15s;font-family:Cambria,Georgia,serif;}
+.btn-p{background:#5a3e1e;color:#f5f0e8;}
+.btn-p:hover{background:#3e2a10;}
+.btn-g{background:transparent;border:1.5px solid #c8b99a;color:#7a6040;}
+.btn-g:hover{background:#ddd5be;}
+
+.form-box{background:#ece5d4;border:1.5px solid #c8b99a;border-radius:10px;padding:16px 18px;margin-bottom:18px;}
+.form-box h3{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#7a6040;font-weight:700;margin-bottom:12px;}
+.form-box input,.form-box select{width:100%;padding:8px 11px;border:1.5px solid #c8b99a;border-radius:6px;background:#faf7f0;font-size:.82rem;color:#2a1f0f;outline:none;margin-bottom:8px;}
+.form-box input:focus,.form-box select:focus{border-color:#7a6040;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+.fg input,.fg select{margin-bottom:0;}
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.qo{border:1.5px solid #c8b99a;border-radius:7px;padding:8px 10px;cursor:pointer;background:#faf7f0;text-align:left;transition:all .15s;}
+.qo .qn{font-size:.82rem;font-weight:600;}
+.qo .qd{font-size:.68rem;color:#7a6040;margin-top:1px;}
+.fa{display:flex;gap:8px;}
+
+.sec-hd{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:#7a6040;padding-bottom:4px;border-bottom:1.5px solid #c8b99a;margin:18px 0 2px;}
+.sec-hd.red{color:#9a2e0a;border-color:#e8b49a;}
+.sec-hd.amb{color:#7a4a00;}
+.sec-hd:first-child{margin-top:0;}
+
+.tr{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px solid #e0d8c8;position:relative;}
+.tr:hover{background:#ece5d4;border-radius:6px;margin:0 -4px;padding:9px 8px;}
+.tr:hover .ta{opacity:1;}
+.chk{width:17px;height:17px;border-radius:50%;border:1.5px solid #c8b99a;flex-shrink:0;margin-top:3px;cursor:pointer;background:transparent;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;}
+.chk.dn{background:#5a3e1e;border-color:#5a3e1e;color:#f5f0e8;}
+.tb{flex:1;min-width:0;}
+.tn{font-size:.88rem;color:#2a1f0f;line-height:1.35;}
+.tn.dn{text-decoration:line-through;color:#a89070;}
+.tm{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;align-items:center;}
+.pill{font-size:.67rem;padding:1px 7px;border-radius:3px;background:#ddd5be;color:#5a3e1e;}
+.pill.q{font-weight:600;}
+.ms{font-size:.7rem;color:#7a6040;}
+.ms.red{color:#9a2e0a;font-weight:600;}
+.ms.blue{color:#1a3a7a;font-weight:600;}
+.ta{display:flex;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0;align-items:center;}
+.ta button{background:none;border:none;cursor:pointer;font-size:.82rem;color:#a89070;padding:2px 5px;border-radius:4px;}
+.ta button:hover{background:#ddd5be;color:#2a1f0f;}
+
+.mb{margin-bottom:14px;}
+.empty{text-align:center;color:#a89070;font-style:italic;padding:48px 0;font-size:.9rem;}
+
+/* MATRIX */
+.mbar{background:#ece5d4;border:1.5px solid #c8b99a;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.mbar label{font-size:.72rem;color:#7a6040;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.mbar input{padding:6px 10px;border:1.5px solid #c8b99a;border-radius:6px;background:#faf7f0;font-size:.8rem;color:#2a1f0f;outline:none;font-family:Cambria,Georgia,serif;}
+.qbtns{display:flex;gap:4px;}
+.qbtn{font-size:.72rem;padding:5px 11px;border:1.5px solid #c8b99a;border-radius:5px;cursor:pointer;background:#faf7f0;color:#5a3e1e;font-family:Cambria,Georgia,serif;}
+.qbtn.on{background:#ddd5be;font-weight:700;}
+#mCnt{font-size:.72rem;color:#7a6040;margin-left:auto;}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.qp{border-radius:9px;border:2px solid;padding:14px;}
+.qph{padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:8px;}
+.qpt{font-size:.88rem;font-weight:700;}
+.qpd{font-size:.68rem;color:#7a6040;margin-top:1px;}
+.mt{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.mt:last-child{border-bottom:none;}
+.mc{width:13px;height:13px;border-radius:50%;border:1.5px solid #c8b99a;flex-shrink:0;margin-top:3px;cursor:pointer;}
+.mn{font-size:.78rem;color:#2a1f0f;line-height:1.3;}
+.msub{font-size:.67rem;color:#7a6040;}
+.me{background:none;border:none;cursor:pointer;font-size:.72rem;color:#a89070;padding:0 3px;}
+.me:hover{color:#2a1f0f;}
+.eq{font-size:.76rem;color:#a89070;font-style:italic;padding:6px 0;}
+
+/* RECURRING TABLE */
+#vRec table{width:100%;border-collapse:collapse;font-size:.82rem;}
+#vRec th{background:#ece5d4;padding:8px 10px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#7a6040;border-bottom:2px solid #c8b99a;font-weight:700;}
+#vRec td{padding:8px 10px;border-bottom:1px solid #e0d8c8;vertical-align:top;}
+#vRec tr:hover td{background:#ece5d4;}
+.freq-pill{font-size:.67rem;padding:2px 7px;border-radius:3px;background:#ddd5be;color:#5a3e1e;white-space:nowrap;}
+
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+    <div>
+      <h1>Vivek Financial</h1>
+      <div class="sub" id="todayLbl"></div>
+    </div>
+    <button class="btn btn-p" onclick="toggleAdd()">+ Add Task</button>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="sv('today')">Today</button>
+    <button class="tab" onclick="sv('all')">All Tasks</button>
+    <button class="tab" onclick="sv('matrix')">Matrix</button>
+    <button class="tab" onclick="sv('rec')">Recurring</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="addForm" class="form-box hidden">
+    <h3>New Task</h3>
+    <input id="f-task" placeholder="Task description…" onkeydown="if(event.key==='Enter')doAdd()"/>
+    <div class="fg">
+      <select id="f-cat"></select>
+      <select id="f-who"></select>
+      <input type="date" id="f-date"/>
+      <input id="f-rec" placeholder="Recurring? e.g. Monthly (7th)"/>
+    </div>
+    <div class="qg" id="fQG"></div>
+    <div class="fa"><button class="btn btn-p" onclick="doAdd()">Save</button><button class="btn btn-g" onclick="toggleAdd()">Cancel</button></div>
+  </div>
+  <div id="editForm" class="form-box hidden">
+    <h3>Edit Task</h3>
+    <input id="e-task" placeholder="Task description…" onkeydown="if(event.key==='Enter')doEdit()"/>
+    <div class="fg">
+      <select id="e-cat"></select>
+      <select id="e-who"></select>
+      <input type="date" id="e-date"/>
+      <input id="e-rec" placeholder="Recurring? e.g. Monthly (7th)"/>
+    </div>
+    <div class="qg" id="eQG"></div>
+    <div class="fa"><button class="btn btn-p" onclick="doEdit()">Save</button><button class="btn btn-g" onclick="cancelEdit()">Cancel</button></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="sOv" style="color:#9a2e0a">0</div><div class="stat-l">Overdue</div></div>
+    <div class="stat"><div class="stat-n" id="sTd" style="color:#7a4a00">0</div><div class="stat-l">Today</div></div>
+    <div class="stat"><div class="stat-n" id="sUp" style="color:#1a3a7a">0</div><div class="stat-l">Upcoming</div></div>
+    <div class="stat"><div class="stat-n" id="sDn" style="color:#6b7280">0</div><div class="stat-l">Done</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input id="srch" placeholder="🔍  Search tasks…" oninput="render()"/>
+    <select id="fCat" onchange="render()"></select>
+    <select id="fWho" onchange="render()"><option value="">All Assignees</option></select>
+    <button class="btn btn-g" onclick="clearF()">Clear</button>
+  </div>
+
+  <div id="vToday"></div>
+  <div id="vAll" class="hidden"></div>
+  <div id="vMatrix" class="hidden">
+    <div class="mbar">
+      <label>Range</label>
+      <input type="date" id="mFrom" onchange="renderMatrix()"/>
+      <span style="color:#7a6040;font-size:.8rem">to</span>
+      <input type="date" id="mTo" onchange="renderMatrix()"/>
+      <div class="qbtns">
+        <button class="qbtn" onclick="mRange(0,0)">Today</button>
+        <button class="qbtn on" onclick="mRange(0,7)">7 days</button>
+        <button class="qbtn" onclick="mRange(0,30)">30 days</button>
+      </div>
+      <span id="mCnt"></span>
+    </div>
+    <div class="mgrid" id="mGrid"></div>
+  </div>
+  <div id="vRec" class="hidden"></div>
+</div>
+
+<script>
+const CATS=["Compliance","Operations","Business Dev","Client Servicing","Meeting Setup","Internal Discussion","Calendar","Communication Cal","Synergy","KORP","Symphony","Follow Up","Unlisted","Rotary","HR","Personal","Reminder","Social Media","LP"];
+const TEAM=["Vivek","Gopal","Rajeev","Aman","Basant","Arvind","Arvind / Rohit","Rohit","Abhishek","Girish","Amit","Sanjay","Dixit","Tyagi","Rajat","Rajat / Dixit","Team","—"];
+const QS=[
+  {id:"Q1",n:"Do First",d:"Urgent · Important",bc:"#9a2e0a",bg:"#fff5f0"},
+  {id:"Q2",n:"Schedule",d:"Important · Not Urgent",bc:"#1a3a7a",bg:"#f0f4ff"},
+  {id:"Q3",n:"Delegate",d:"Urgent · Not Important",bc:"#7a4a00",bg:"#fffbf0"},
+  {id:"Q4",n:"Eliminate",d:"Neither",bc:"#5a5a5a",bg:"#f5f5f5"},
+];
+
+const TODAY=new Date().toISOString().split("T")[0];
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x.toISOString().split("T")[0];}
+function fmt(d){if(!d)return"";const[y,m,day]=d.split("-");return`${+day} ${["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m]} ${y}`;}
+
+const SEED=[
+  // TODAY 2 MAR
+  {id:1,task:"VAPT Firewall",cat:"Compliance",who:"Basant",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:2,task:"VAPT Symphony",cat:"Compliance",who:"Abhishek",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:3,task:"VAPT Synergy",cat:"Compliance",who:"Sanjay",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:4,task:"GST – Kunal Gandhi",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-02",done:false,rec:"Monthly"},
+  {id:5,task:"Investor Charter & Complaint Disclosure – Feb 2026",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-02",done:false,rec:"Monthly (7th)"},
+  {id:6,task:"BSE STR Count – Jan 2026",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-02",done:false,rec:"Monthly (1st)"},
+  {id:7,task:"IG Report",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-02",done:false,rec:"Monthly (10th)"},
+  {id:8,task:"API DP",cat:"Operations",who:"Arvind / Rohit",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:9,task:"API Banks",cat:"Operations",who:"Arvind / Rohit",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:10,task:"API Exchange",cat:"Operations",who:"Vivek",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:11,task:"Aditi Computers Share Transfer Issue",cat:"Operations",who:"Arvind",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:12,task:"Symphony Server – Active/Passive",cat:"Operations",who:"Basant",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:13,task:"Process Changes",cat:"Operations",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:14,task:"Transaction Charges",cat:"Operations",who:"Girish",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:15,task:"Vandana Nagpal",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:16,task:"Neha Sabarwal – Harmit Singh",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:17,task:"Anjan – Saurabh Goel",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:18,task:"Rishipreet Bhatia",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:19,task:"Mahesh Rehani",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:20,task:"Jaspreet – MF",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:21,task:"Vivek Phangasa – Shriram KYC",cat:"Client Servicing",who:"—",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:22,task:"Capital Gain Report",cat:"Synergy",who:"Sanjay",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:23,task:"SOP — Trading Compliances",cat:"KORP",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:24,task:"SOP — Payin / Payout",cat:"KORP",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:25,task:"UI Changes",cat:"Symphony",who:"Abhishek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:26,task:"Deepak Kukreja",cat:"Follow Up",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:27,task:"HDFC International Card Activation",cat:"Personal",who:"Vivek",q:"Q3",date:"2026-03-02",done:false,rec:""},
+  {id:28,task:"Honda City Mobile Number Change",cat:"Personal",who:"Tyagi",q:"Q3",date:"2026-03-02",done:false,rec:""},
+  {id:29,task:"Fasttag Closure for Old Car",cat:"Personal",who:"—",q:"Q3",date:"2026-03-02",done:false,rec:""},
+  {id:30,task:"Niyati Visa",cat:"Personal",who:"—",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  {id:31,task:"TDS on Unlisted — Dhankriti | Reco by Danu | Sushil Pandit",cat:"Unlisted",who:"Vivek",q:"Q1",date:"2026-03-02",done:false,rec:""},
+  {id:32,task:"Rotary Year Planning",cat:"Rotary",who:"—",q:"Q4",date:"2026-03-02",done:false,rec:""},
+  {id:33,task:"Neha Vij – Meeting Setup",cat:"Meeting Setup",who:"Vivek",q:"Q2",date:"2026-03-02",done:false,rec:""},
+  // 3 MAR
+  {id:34,task:"Chanpreet Singh — 4:00–5:30 PM | Udyog Vihar",cat:"Calendar",who:"Vivek",q:"Q2",date:"2026-03-03",done:false,rec:""},
+  {id:35,task:"Vara Gaur — 6:00–7:00 PM | Nivana Courtyard",cat:"Calendar",who:"Vivek",q:"Q2",date:"2026-03-03",done:false,rec:""},
+  // 4 MAR
+  {id:36,task:"Disclosure of Investor Complaints Data on Website",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-04",done:false,rec:"Monthly (4th)"},
+  {id:37,task:"1600 Telephone Numbers",cat:"Operations",who:"—",q:"Q3",date:"2026-03-04",done:false,rec:""},
+  {id:38,task:"Umesh Chugh HUF Account",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-04",done:false,rec:""},
+  // 5 MAR
+  {id:39,task:"NSE MD Letter",cat:"Internal Discussion",who:"Vivek",q:"Q1",date:"2026-03-05",done:false,rec:""},
+  {id:40,task:"OS Update – KORP Server",cat:"Operations",who:"Basant",q:"Q2",date:"2026-03-05",done:false,rec:""},
+  {id:41,task:"OS Update – Symphony Server",cat:"Operations",who:"Basant",q:"Q2",date:"2026-03-05",done:false,rec:""},
+  {id:42,task:"Amarjit Chopra Modification",cat:"Client Servicing",who:"Aman",q:"Q2",date:"2026-03-05",done:false,rec:""},
+  {id:43,task:"Parameter Setting / Audit / Trail",cat:"KORP",who:"Dixit",q:"Q2",date:"2026-03-05",done:false,rec:""},
+  {id:44,task:"⏰ Reminder: Statutory Orders Freeze/Unfreeze due 10 Mar",cat:"Reminder",who:"Arvind",q:"Q3",date:"2026-03-05",done:false,rec:""},
+  {id:45,task:"⏰ Reminder: IG Report due 10 Mar",cat:"Reminder",who:"Arvind",q:"Q3",date:"2026-03-05",done:false,rec:""},
+  // 6 MAR
+  {id:46,task:"Atul Sobti – Meeting Setup",cat:"Meeting Setup",who:"Vivek",q:"Q2",date:"2026-03-06",done:false,rec:""},
+  {id:47,task:"CA Abhinandan Baidya – Meeting Setup",cat:"Meeting Setup",who:"Vivek",q:"Q2",date:"2026-03-06",done:false,rec:""},
+  // 7 MAR
+  {id:48,task:"⏰ Reminder: Investor Charter & Complaint Disclosure due 7 Mar",cat:"Reminder",who:"Arvind",q:"Q1",date:"2026-03-07",done:false,rec:""},
+  // 8 MAR
+  {id:49,task:"⏰ Reminder: Running Account Settlement due 6–7 Apr",cat:"Reminder",who:"—",q:"Q3",date:"2026-03-08",done:false,rec:""},
+  {id:50,task:"⏰ Reminder: NSDL BO Grievance / STR / Tariff due 10 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-08",done:false,rec:""},
+  // 9 MAR
+  {id:51,task:"⏰ Reminder: Surrendered Mobile Details due 12 Mar",cat:"Reminder",who:"Arvind",q:"Q3",date:"2026-03-09",done:false,rec:""},
+  {id:52,task:"AP (Authorised Person) Reporting",cat:"Compliance",who:"Rajat",q:"Q1",date:"2026-03-09",done:false,rec:"Weekly (Monday)"},
+  // 10 MAR
+  {id:53,task:"NSDL BO Grievance Report – Mar 2026",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-10",done:false,rec:"Monthly (10th)"},
+  {id:54,task:"STR Reporting to FIU-IND – Mar 2026",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-10",done:false,rec:"Monthly (10th)"},
+  {id:55,task:"Tariff Disclosure – Mar 2026",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-10",done:false,rec:"Monthly (10th)"},
+  {id:56,task:"Statutory Orders — Freeze / Unfreeze Accounts",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-10",done:false,rec:"Monthly (10th)"},
+  {id:57,task:"IG Report",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-10",done:false,rec:"Monthly (10th)"},
+  {id:58,task:"⏰ Reminder: Advance Tax 100% due 15 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-10",done:false,rec:""},
+  {id:59,task:"⏰ Reminder: FATF Submission via ePASS due 15 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-10",done:false,rec:""},
+  {id:60,task:"⏰ Reminder: SEBI Digital Accessibility Compliance due 31 Mar",cat:"Reminder",who:"Vivek",q:"Q1",date:"2026-03-10",done:false,rec:""},
+  {id:61,task:"⏰ Reminder: Google Play VF Trade Merchandising deadline 16 Mar",cat:"Reminder",who:"Rohit",q:"Q1",date:"2026-03-10",done:false,rec:""},
+  {id:62,task:"Sumit Jain",cat:"Business Dev",who:"Vivek",q:"Q2",date:"2026-03-10",done:false,rec:""},
+  // 12 MAR
+  {id:63,task:"Surrendered Mobile Details",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-12",done:false,rec:"Monthly (12th)"},
+  // 14 MAR
+  {id:64,task:"⏰ Reminder: BSDA Conversion due 16 Mar",cat:"Reminder",who:"Arvind",q:"Q2",date:"2026-03-14",done:false,rec:""},
+  // 15 MAR
+  {id:65,task:"Advance Tax – 100% Installment",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  {id:66,task:"FATF Submission via ePASS",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:"Annual (15 Mar)"},
+  {id:67,task:"API WhatsApp",cat:"Operations",who:"Vivek",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  {id:68,task:"⏰ Reminder: Networth Certificate Half-Year due 31 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  {id:69,task:"⏰ Reminder: Year-end Records Closure due 31 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  {id:70,task:"⏰ Reminder: VAPT Annual Submission due 31 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  {id:71,task:"⏰ Reminder: AML Officer Training Record due 31 Mar",cat:"Reminder",who:"—",q:"Q1",date:"2026-03-15",done:false,rec:""},
+  // 16 MAR
+  {id:72,task:"BSDA Conversion",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-16",done:false,rec:"Monthly (16th)"},
+  {id:73,task:"EPFO – Ashok Kakar",cat:"HR",who:"—",q:"Q2",date:"2026-03-16",done:false,rec:""},
+  // 18 MAR
+  {id:74,task:"⏰ Reminder: NSDL Non-profit Transaction Report due 20 Mar",cat:"Reminder",who:"—",q:"Q2",date:"2026-03-18",done:false,rec:""},
+  {id:75,task:"⏰ Reminder: NSDL Same Mobile/Email Report due 27 Mar",cat:"Reminder",who:"—",q:"Q2",date:"2026-03-18",done:false,rec:""},
+  // 20 MAR
+  {id:76,task:"Non-profit Org Transaction Report to FIU-IND",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-20",done:false,rec:"Monthly (20th)"},
+  // 22 MAR
+  {id:77,task:"NEAT Adapter – New Encryption Parameters (Effective Apr 11)",cat:"Operations",who:"Arvind",q:"Q1",date:"2026-03-22",done:false,rec:""},
+  // 25 MAR
+  {id:78,task:"⏰ Reminder: BSE STR Count due 31 Mar",cat:"Reminder",who:"Arvind",q:"Q2",date:"2026-03-25",done:false,rec:""},
+  // 27 MAR
+  {id:79,task:"NSDL Same Mobile/Email Compliance Report",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-27",done:false,rec:"Monthly (27th)"},
+  // 31 MAR
+  {id:80,task:"Networth Certificate – Half Year (Sep–Mar)",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-31",done:false,rec:"Half Yearly"},
+  {id:81,task:"Year-end Records Closure",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-31",done:false,rec:"Annual"},
+  {id:82,task:"VAPT Annual Submission",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-31",done:false,rec:"Annual"},
+  {id:83,task:"AML Officer Identification & Training Record",cat:"Compliance",who:"—",q:"Q1",date:"2026-03-31",done:false,rec:"Annual"},
+  {id:84,task:"BSE STR Count – Mar 2026",cat:"Compliance",who:"Arvind",q:"Q1",date:"2026-03-31",done:false,rec:"Monthly (1st)"},
+  {id:85,task:"SEBI Digital Accessibility Compliance — EnableUser",cat:"Compliance",who:"Vivek",q:"Q1",date:"2026-03-31",done:false,rec:""},
+  // APR+
+  {id:86,task:"Dinesh Inspection",cat:"Follow Up",who:"Vivek",q:"Q1",date:"2026-04-03",done:false,rec:""},
+  {id:87,task:"AP Inspection Reporting – Q4",cat:"Follow Up",who:"Vivek",q:"Q1",date:"2026-04-03",done:false,rec:""},
+  {id:88,task:"Invest'n'Stock Inspection",cat:"Follow Up",who:"Vivek",q:"Q1",date:"2026-04-03",done:false,rec:""},
+  {id:89,task:"Akshaya Tritiya Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-04-09",done:false,rec:""},
+  {id:90,task:"Guru Purnima Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-07-09",done:false,rec:""},
+  {id:91,task:"Independence Day Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-08-05",done:false,rec:""},
+  {id:92,task:"Raksha Bandhan Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-08-18",done:false,rec:""},
+  {id:93,task:"Janmashtami Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-08-25",done:false,rec:""},
+  {id:94,task:"Ganesh Chaturthi Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-09-04",done:false,rec:""},
+  {id:95,task:"Navratri Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-10-01",done:false,rec:""},
+  {id:96,task:"Gandhi Jayanti Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-10-02",done:false,rec:""},
+  {id:97,task:"Dussehra Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-10-10",done:false,rec:""},
+  {id:98,task:"Dhanteras Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-10-27",done:false,rec:""},
+  {id:99,task:"Muhurat Trading Session",cat:"Communication Cal",who:"Team",q:"Q1",date:"2026-10-28",done:false,rec:""},
+  {id:100,task:"Diwali Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-10-29",done:false,rec:""},
+  {id:101,task:"Guru Nanak Dev Jayanti Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-11-14",done:false,rec:""},
+  {id:102,task:"New Year Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2026-12-21",done:false,rec:""},
+  {id:103,task:"Update Communication Calendar – VF Drive",cat:"Operations",who:"Vivek",q:"Q2",date:"2026-12-25",done:false,rec:"Annual"},
+  {id:104,task:"Kaju for New Year",cat:"Personal",who:"Vivek",q:"Q4",date:"2026-12-27",done:false,rec:""},
+  {id:105,task:"Republic Day Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2027-01-15",done:false,rec:""},
+  {id:106,task:"Shivratri Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2027-02-21",done:false,rec:""},
+  {id:107,task:"Holi Greetings",cat:"Communication Cal",who:"Team",q:"Q3",date:"2027-03-10",done:false,rec:""},
+  {id:108,task:"Sonicwall Renewal",cat:"Operations",who:"Vivek",q:"Q1",date:"2029-01-07",done:false,rec:"Annual"},
+];
+
+const RECURRING=[
+  {task:"AP (Authorised Person) Reporting",who:"Rajat",freq:"Weekly",due:"Every Monday",reminder:"Same day",auth:"NSE / BSE"},
+  {task:"Investor Charter & Complaint Disclosure",who:"Arvind",freq:"Monthly",due:"7th of month",reminder:"3rd of month",auth:"NSE / BSE"},
+  {task:"BSE STR Count",who:"Arvind",freq:"Monthly",due:"1st of month",reminder:"Last day of prior month",auth:"BSE"},
+  {task:"IG Report",who:"Arvind",freq:"Monthly",due:"10th of month",reminder:"5th of month",auth:"Internal"},
+  {task:"Statutory Orders — Freeze / Unfreeze Accounts",who:"Arvind",freq:"Monthly",due:"10th of month",reminder:"5th of month",auth:"NSE / BSE"},
+  {task:"Surrendered Mobile Details",who:"Arvind",freq:"Monthly",due:"12th of month",reminder:"9th of month",auth:"NSDL"},
+  {task:"BSDA Conversion",who:"Arvind",freq:"Monthly",due:"16th of month",reminder:"14th of month",auth:"NSDL"},
+  {task:"NSDL BO Grievance Report",who:"—",freq:"Monthly",due:"10th of month",reminder:"8th of month",auth:"NSDL"},
+  {task:"STR Reporting to FIU-IND",who:"—",freq:"Monthly",due:"10th of month",reminder:"8th of month",auth:"NSDL / AML"},
+  {task:"Tariff Disclosure",who:"—",freq:"Monthly",due:"10th of month",reminder:"8th of month",auth:"NSDL"},
+  {task:"NSDL Same Mobile/Email Compliance Report",who:"—",freq:"Monthly",due:"27th of month",reminder:"25th of month",auth:"NSDL"},
+  {task:"Non-profit Org Transaction Report to FIU-IND",who:"—",freq:"Monthly",due:"20th of month",reminder:"18th of month",auth:"NSDL"},
+  {task:"Disclosure of Investor Complaints on Website",who:"—",freq:"Monthly",due:"4th of month",reminder:"2nd of month",auth:"NSE / BSE"},
+  {task:"GST – Kunal Gandhi",who:"—",freq:"Monthly",due:"1st of month",reminder:"Last day of prior month",auth:"GST"},
+  {task:"FATF Submission via ePASS",who:"—",freq:"Annual",due:"15 Mar",reminder:"10 Mar",auth:"NSDL"},
+  {task:"Networth Certificate – Half Year",who:"—",freq:"Half Yearly",due:"31 Mar / 30 Sep",reminder:"15 Mar / 15 Sep",auth:"NSE / BSE"},
+  {task:"Year-end Records Closure",who:"—",freq:"Annual",due:"31 Mar",reminder:"15 Mar",auth:"Internal"},
+  {task:"VAPT Annual Submission",who:"—",freq:"Annual",due:"31 Mar",reminder:"15 Mar",auth:"SEBI"},
+  {task:"AML Officer Identification & Training Record",who:"—",freq:"Annual",due:"31 Mar",reminder:"15 Mar",auth:"FIU-IND"},
+  {task:"SEBI Digital Accessibility Compliance",who:"Vivek",freq:"Annual",due:"31 Mar",reminder:"10 Mar",auth:"SEBI"},
+  {task:"Update Communication Calendar – VF Drive",who:"—",freq:"Annual",due:"25 Dec",reminder:"—",auth:"Internal"},
+  {task:"Sonicwall Renewal",who:"—",freq:"Annual",due:"7 Jan 2029",reminder:"Oct 2028",auth:"Internal"},
+];
+
+let stored=null;try{stored=JSON.parse(localStorage.getItem("vf26"));}catch(e){}
+let data=stored&&stored.length?stored:SEED;
+let nid=Math.max(...data.map(t=>t.id))+1;
+let eid=null,fAQ="Q1",fEQ="Q1",view="today";
+function persist(){localStorage.setItem("vf26",JSON.stringify(data));}
+function save(){persist();render();}
+
+function init(){
+  document.getElementById("todayLbl").textContent=fmt(TODAY);
+  ["f-cat","e-cat","fCat"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.innerHTML=(id==="fCat"?`<option value="">All Categories</option>`:"")+CATS.map(c=>`<option value="${c}">${c}</option>`).join("");
+  });
+  ["f-who","e-who","fWho"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.innerHTML=(id==="fWho"?`<option value="">All Assignees</option>`:"")+TEAM.map(t=>`<option value="${t}">${t}</option>`).join("");
+  });
+  buildQG("fQG","f");buildQG("eQG","e");
+  document.getElementById("mFrom").value=TODAY;
+  document.getElementById("mTo").value=addDays(TODAY,7);
+  document.getElementById("f-date").value=TODAY;
+  render();
+}
+
+function buildQG(cid,p){
+  document.getElementById(cid).innerHTML=QS.map(q=>`
+    <button class="qo" id="${p}Q${q.id}" onclick="pickQ('${p}','${q.id}')">
+      <div class="qn" style="color:${q.bc}">● ${q.n}</div>
+      <div class="qd">${q.d}</div>
+    </button>`).join("");
+  hlQ(p,p==="f"?fAQ:fEQ);
+}
+function pickQ(p,qid){if(p==="f")fAQ=qid;else fEQ=qid;hlQ(p,qid);}
+function hlQ(p,qid){
+  QS.forEach(q=>{
+    const b=document.getElementById(`${p}Q${q.id}`);if(!b)return;
+    const on=q.id===qid;
+    b.style.borderColor=on?q.bc:"#c8b99a";
+    b.style.background=on?q.bg:"#faf7f0";
+    b.style.borderWidth=on?"2px":"1.5px";
+  });
+}
+
+function toggleAdd(){
+  const f=document.getElementById("addForm");
+  f.classList.toggle("hidden");
+  if(!f.classList.contains("hidden")) document.getElementById("f-task").focus();
+}
+function doAdd(){
+  const t=document.getElementById("f-task").value.trim();if(!t)return;
+  data.push({id:nid++,task:t,cat:document.getElementById("f-cat").value,who:document.getElementById("f-who").value,
+    q:fAQ,date:document.getElementById("f-date").value||TODAY,done:false,rec:document.getElementById("f-rec").value});
+  document.getElementById("f-task").value="";document.getElementById("f-rec").value="";
+  document.getElementById("addForm").classList.add("hidden");save();
+}
+function startEdit(id){
+  eid=id;const t=data.find(x=>x.id===id);
+  document.getElementById("e-task").value=t.task;
+  document.getElementById("e-cat").value=t.cat;
+  document.getElementById("e-who").value=t.who;
+  document.getElementById("e-date").value=t.date;
+  document.getElementById("e-rec").value=t.rec||"";
+  fEQ=t.q||"Q1";hlQ("e",fEQ);
+  document.getElementById("editForm").classList.remove("hidden");
+  document.getElementById("editForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function doEdit(){
+  data=data.map(t=>t.id!==eid?t:{...t,
+    task:document.getElementById("e-task").value.trim()||t.task,
+    cat:document.getElementById("e-cat").value,who:document.getElementById("e-who").value,
+    date:document.getElementById("e-date").value,rec:document.getElementById("e-rec").value,q:fEQ});
+  cancelEdit();
+}
+function cancelEdit(){eid=null;document.getElementById("editForm").classList.add("hidden");save();}
+function toggleDone(id){data=data.map(t=>t.id===id?{...t,done:!t.done}:t);save();}
+function del(id){if(!confirm("Delete this task?"))return;data=data.filter(t=>t.id!==id);save();}
+
+function filt(t){
+  const s=document.getElementById("srch").value.toLowerCase();
+  const c=document.getElementById("fCat").value;
+  const w=document.getElementById("fWho").value;
+  return(!s||t.task.toLowerCase().includes(s))&&(!c||t.cat===c)&&(!w||t.who===w);
+}
+function clearF(){document.getElementById("srch").value="";document.getElementById("fCat").value="";document.getElementById("fWho").value="";render();}
+
+function sv(v){
+  view=v;
+  ["today","all","matrix","rec"].forEach(x=>{
+    document.getElementById("v"+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle("hidden",x!==v);
+  });
+  document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",["today","all","matrix","rec"][i]===v));
+  if(v==="matrix")renderMatrix();else if(v==="rec")renderRec();else render();
+}
+
+function rowHTML(t,showDate=false){
+  const q=QS.find(x=>x.id===t.q)||QS[0];
+  const ov=!t.done&&t.date<TODAY;
+  const isBD=t.cat==="Business Dev";
+  return `<div class="tr">
+    <div class="chk ${t.done?"dn":""}" onclick="toggleDone(${t.id})">${t.done?"✓":""}</div>
+    <div class="tb">
+      <div class="tn ${t.done?"dn":""}">${t.task}</div>
+      <div class="tm">
+        <span class="pill">${t.cat}</span>
+        ${t.who&&t.who!=="—"?`<span class="ms">${t.who}</span>`:""}
+        <span class="pill q" style="background:${q.bg};color:${q.bc};border:1px solid ${q.bc}40">● ${q.n}</span>
+        ${t.rec?`<span class="ms" style="font-style:italic">↻ ${t.rec}</span>`:""}
+        ${isBD?`<span class="ms blue">To Contact</span>`:""}
+        ${showDate?`<span class="ms ${ov?"red":""}">${fmt(t.date)}</span>`:""}
+      </div>
+    </div>
+    <div class="ta">
+      ${ov?`<span class="ms red">Overdue</span>`:""}
+      <button onclick="startEdit(${t.id})" title="Edit">✏</button>
+      <button onclick="del(${t.id})" title="Delete" style="color:#9a2e0a">✕</button>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const pend=data.filter(t=>!t.done);
+  document.getElementById("sOv").textContent=pend.filter(t=>t.date<TODAY).length;
+  document.getElementById("sTd").textContent=pend.filter(t=>t.date===TODAY).length;
+  document.getElementById("sUp").textContent=pend.filter(t=>t.date>TODAY).length;
+  document.getElementById("sDn").textContent=data.filter(t=>t.done).length;
+
+  if(view==="today"){
+    const ov=pend.filter(t=>t.date<TODAY&&filt(t)).sort((a,b)=>a.date.localeCompare(b.date));
+    const td=pend.filter(t=>t.date===TODAY&&filt(t));
+    let h="";
+    if(!ov.length&&!td.length){h=`<div class="empty">Nothing pending today. ✓</div>`;}
+    else{
+      if(ov.length) h+=`<div class="sec-hd red">Overdue (${ov.length})</div>${ov.map(t=>rowHTML(t,true)).join("")}<div class="mb"></div>`;
+      if(td.length) h+=`<div class="sec-hd amb">Today — ${fmt(TODAY)} (${td.length})</div>${td.map(t=>rowHTML(t)).join("")}`;
+    }
+    document.getElementById("vToday").innerHTML=h;
+  }
+
+  if(view==="all"){
+    const all=pend.filter(t=>filt(t)).sort((a,b)=>a.date.localeCompare(b.date));
+    if(!all.length){document.getElementById("vAll").innerHTML=`<div class="empty">No pending tasks.</div>`;return;}
+    const grp={};all.forEach(t=>{(grp[t.date]=grp[t.date]||[]).push(t);});
+    let h="";
+    Object.keys(grp).sort().forEach(d=>{
+      const cls=d<TODAY?"red":d===TODAY?"amb":"";
+      h+=`<div class="sec-hd ${cls}">${d<TODAY?"Overdue · ":""}${fmt(d)} (${grp[d].length})</div>`;
+      h+=grp[d].map(t=>rowHTML(t,d!==TODAY)).join("");
+      h+=`<div class="mb"></div>`;
+    });
+    document.getElementById("vAll").innerHTML=h;
+  }
+}
+
+function mRange(f,t){
+  document.getElementById("mFrom").value=addDays(TODAY,f);
+  document.getElementById("mTo").value=addDays(TODAY,t);
+  document.querySelectorAll(".qbtn").forEach((b,i)=>b.classList.toggle("on",[0,7,30][i]===t));
+  renderMatrix();
+}
+function renderMatrix(){
+  const from=document.getElementById("mFrom").value,to=document.getElementById("mTo").value;
+  const mt=data.filter(t=>!t.done&&t.date>=from&&t.date<=to&&filt(t));
+  document.getElementById("mCnt").textContent=mt.length+" tasks";
+  if(!mt.length){document.getElementById("mGrid").innerHTML=`<div class="empty" style="grid-column:span 2">No pending tasks in this range.</div>`;return;}
+  document.getElementById("mGrid").innerHTML=QS.map(q=>{
+    const qt=mt.filter(t=>t.q===q.id).sort((a,b)=>a.date.localeCompare(b.date));
+    return`<div class="qp" style="border-color:${q.bc};background:${q.bg}">
+      <div class="qph"><div class="qpt" style="color:${q.bc}">● ${q.n}</div><div class="qpd">${q.d} · ${qt.length} tasks</div></div>
+      ${qt.length?qt.map(t=>`<div class="mt">
+        <div class="mc" onclick="toggleDone(${t.id})"></div>
+        <div style="flex:1;min-width:0"><div class="mn">${t.task}</div><div class="msub">${t.who!=="—"?t.who+" · ":""}${fmt(t.date)}</div></div>
+        <button class="me" onclick="startEdit(${t.id})">✏</button>
+      </div>`).join(""):`<div class="eq">Clear</div>`}
+    </div>`;
+  }).join("");
+}
+
+function renderRec(){
+  const h=`<table>
+    <thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Frequency</th><th>Due Date</th><th>Reminder</th><th>Authority</th></tr></thead>
+    <tbody>${RECURRING.map((r,i)=>`<tr>
+      <td style="color:#7a6040">${i+1}</td>
+      <td>${r.task}</td>
+      <td>${r.who}</td>
+      <td><span class="freq-pill">${r.freq}</span></td>
+      <td>${r.due}</td>
+      <td style="color:#9a2e0a">${r.reminder}</td>
+      <td style="color:#1a3a7a;font-size:.75rem">${r.auth}</td>
+    </tr>`).join("")}</tbody>
+  </table>`;
+  document.getElementById("vRec").innerHTML=h;
+}
+
+init();
+</script>
+</body>
+</html>
