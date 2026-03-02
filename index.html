@@ -18,7 +18,7 @@ input,select,button{font-family:Cambria,Georgia,serif;}
 .tab:hover{background:#ddd5be;}
 .tab.on{background:#5a3e1e;color:#f5f0e8;border-color:#5a3e1e;font-weight:700;}
 
-#main{max-width:940px;margin:0 auto;padding:20px 28px 80px;}
+#main{max-width:100%;margin:0;padding:20px 28px 80px;}
 
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
 .stat{background:#ece5d4;border:1.5px solid #c8b99a;border-radius:8px;padding:10px 8px;text-align:center;}
@@ -353,7 +353,8 @@ const RECURRING=[
   {task:"Sonicwall Renewal",who:"—",freq:"Annual",due:"7 Jan 2029",reminder:"Oct 2028",auth:"Internal"},
 ];
 
-let data=JSON.parse(localStorage.getItem("vf26")||"null")||SEED;
+let stored=null;try{stored=JSON.parse(localStorage.getItem("vf26"));}catch(e){}
+let data=stored&&stored.length?stored:SEED;
 let nid=Math.max(...data.map(t=>t.id))+1;
 let eid=null,fAQ="Q1",fEQ="Q1",view="today";
 function persist(){localStorage.setItem("vf26",JSON.stringify(data));}
